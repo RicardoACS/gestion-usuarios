@@ -32,7 +32,7 @@ public interface UserService {
     ResponseEntity<UserDto> updateUser(String id, CreateUserDto request);
 
     /**
-     * Método para mostrar todos los usuarios
+     * Método para mostrar todos los usuarios activos
      *
      * @return Usuarios
      */

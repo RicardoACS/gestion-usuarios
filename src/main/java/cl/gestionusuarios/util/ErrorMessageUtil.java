@@ -16,9 +16,11 @@ public class ErrorMessageUtil {
         return objectFile.toString();
     }
 
-    public static String errorMessage(List<String> message) {
+    public static String errorMessage(List<String> messages) {
         JSONObject objectFile = new JSONObject();
-        objectFile.put("mensaje", message);
+        for (String m : messages) {
+            objectFile.append("mensaje", m);
+        }
         return objectFile.toString();
     }
 }

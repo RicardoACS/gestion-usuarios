@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 public class UserValidator {
 
     private String regexEmail = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
+    private String regexPassword = "^(?=.*[a-z])[a-z]*[A-Z][a-z]*([0-9]{2})$";
 
 
     public List<String> validate(CreateUserDto request) {
@@ -31,7 +32,10 @@ public class UserValidator {
             errors.add("Debe ingresar un email válido");
         }
 
-        String a = "Debe ingresar una contraseña válida (Mayúscula, minúsculas y dos números)";
+        if (!request.getPassword().matches(regexPassword)){
+            errors.add("Debe ingresar una contraseña válida (Mayúscula, minúsculas y dos números)");
+        }
+
         return errors;
     }
 

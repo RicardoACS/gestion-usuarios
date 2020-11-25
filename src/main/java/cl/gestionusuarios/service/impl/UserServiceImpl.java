@@ -12,14 +12,15 @@ import cl.gestionusuarios.util.converter.CreateUserDtoToUserConverter;
 import cl.gestionusuarios.util.converter.PhoneDtoToPhoneConverter;
 import cl.gestionusuarios.util.converter.UserToUserDtoConverter;
 import lombok.extern.slf4j.Slf4j;
-import org.json.HTTP;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static cl.gestionusuarios.util.ErrorMessageUtil.errorMessage;
 
@@ -60,8 +61,8 @@ public class UserServiceImpl implements UserService {
             phoneRepository.saveAll(new PhoneDtoToPhoneConverter().convert(request.getPhones(), user));
 
             log.info("[Service] Retornará el usuario");
-            return new ResponseEntity(new UserToUserDtoConverter().convert(user,
-                    phoneRepository.getAllPhoneByUserId(user.getId())), HttpStatus.OK);
+            return new ResponseEntity(new UserToUserDtoConverter(phoneRepository).convert(user),
+                    HttpStatus.OK);
         } catch (Exception e) {
             log.error("[Service] Ha ocurrido un error al crear el usuario: ", e);
             return new ResponseEntity(errorMessage("Ha ocurrido un error inesperado al crear el usuario"),
@@ -94,8 +95,8 @@ public class UserServiceImpl implements UserService {
 
             log.info("[Service] Retornará el usuario");
 
-            return new ResponseEntity(new UserToUserDtoConverter().convert(userUpdate,
-                    phoneRepository.getAllPhoneByUserId(id)), HttpStatus.OK);
+            return new ResponseEntity(new UserToUserDtoConverter(phoneRepository).convert(userUpdate),
+                    HttpStatus.OK);
         } catch (Exception e) {
             log.error("[Service] Ha ocurrido un error al modificar el usuario: ", e);
             return new ResponseEntity(errorMessage("Ha ocurrido un error inesperado al modificar el usuario"),
@@ -105,11 +106,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<List<UserDto>> getAllUser() {
-        log.info("[Service] Se obtendran todos los usuarios");
+        log.info("[Service] Se obtendran todos los usuarios activos");
         try {
             List<User> userList = userRepository.findAll();
-            List<Phone> phones = phoneRepository.findAll();
-            return new ResponseEntity(new UserToUserDtoConverter().convert(userList, phones), HttpStatus.OK);
+
+            return new ResponseEntity(userList.stream()
+                    .map(new UserToUserDtoConverter(phoneRepository)::convert)
+                    .filter(f -> f.getIsActive())
+                    .collect(Collectors.toList()),
+                    HttpStatus.OK);
         } catch (Exception e) {
             log.error("[Service] Ha ocurrido un error al buscar todos los usuarios: ", e);
             return new ResponseEntity(errorMessage("Ha ocurrido un error inesperado al buscar todos los usuarios"),
@@ -128,8 +133,8 @@ public class UserServiceImpl implements UserService {
                 return new ResponseEntity(errorMessage("Usuario no se encuentra registrado"), HttpStatus.NOT_FOUND);
             }
 
-            return new ResponseEntity(new UserToUserDtoConverter().convert(user.get(),
-                    phoneRepository.getAllPhoneByUserId(user.get().getId())), HttpStatus.OK);
+            return new ResponseEntity(new UserToUserDtoConverter(phoneRepository).convert(user.get()),
+                    HttpStatus.OK);
         } catch (Exception e) {
             log.error("[Service] Ha ocurrido un error al buscar el usuario: ", e);
             return new ResponseEntity(errorMessage("Ha ocurrido un error inesperado al buscar el usuario"),
@@ -151,7 +156,7 @@ public class UserServiceImpl implements UserService {
             user.get().setIsActive(state);
             user.get().setModified(new Date());
             userRepository.save(user.get());
-            return new ResponseEntity(errorMessage("Usuario actualizado con éxito"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity(errorMessage("Usuario actualizado con éxito"), HttpStatus.OK);
 
         } catch (Exception e) {
             log.error("[Service] Ha ocurrido un error al desactivar el usuario: ", e);

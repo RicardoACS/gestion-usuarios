@@ -91,12 +91,12 @@ public class UserController {
         return userService.getUserById(id);
     }
 
-    @Operation(description = "Obtiene todos los usuarios")
+    @Operation(description = "Obtiene todos los usuarios activos")
     @ApiResponse(responseCode = "200", description = "OK")
     @ApiResponse(responseCode = "500", description = "Error interno")
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUser() {
-        log.info("[Controller] Se obtendrán todos los usuarios");
+        log.info("[Controller] Se obtendrán todos los usuarios activos");
         return userService.getAllUser();
     }
 }
