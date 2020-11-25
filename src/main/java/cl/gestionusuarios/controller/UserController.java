@@ -1,6 +1,5 @@
 package cl.gestionusuarios.controller;
 
-import cl.gestionusuarios.domain.User;
 import cl.gestionusuarios.dto.CreateUserDto;
 import cl.gestionusuarios.dto.UserDto;
 import cl.gestionusuarios.service.UserService;
@@ -43,7 +42,8 @@ public class UserController {
     @ApiResponse(responseCode = "500", description = "Error interno")
     @PostMapping
     public ResponseEntity<UserDto> createUser(@RequestBody CreateUserDto request) {
-        log.info("[Controller] Se creará un usuario");
+        log.info("[Controller] Se creara un usuario");
+
         List<String> errors = userValidator.validate(request);
         if (!errors.isEmpty()) {
             return new ResponseEntity(errorMessage(errors), HttpStatus.BAD_REQUEST);
@@ -59,7 +59,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable("id") String id,
                                               @RequestBody CreateUserDto request) {
-        log.info("[Controller] Se modificará un usuario");
+        log.info("[Controller] Se modificara un usuario");
         List<String> errors = userValidator.validate(request);
         if (!errors.isEmpty()) {
             return new ResponseEntity(errorMessage(errors), HttpStatus.BAD_REQUEST);
@@ -75,7 +75,7 @@ public class UserController {
     @PutMapping("/{id}/change-state")
     public ResponseEntity<String> changeState(@PathVariable("id") String id,
                                               @RequestParam("state") Boolean state) {
-        log.info("[Controller] Se desactivará un usuario");
+        log.info("[Controller] Se cambiara el estado a un usuario");
 
         return userService.changeState(id, state);
     }
@@ -86,7 +86,7 @@ public class UserController {
     @ApiResponse(responseCode = "500", description = "Error interno")
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable("id") String id) {
-        log.info("[Controller] Se buscará un usuario");
+        log.info("[Controller] Se buscara un usuario");
 
         return userService.getUserById(id);
     }
@@ -96,7 +96,7 @@ public class UserController {
     @ApiResponse(responseCode = "500", description = "Error interno")
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUser() {
-        log.info("[Controller] Se obtendrán todos los usuarios activos");
+        log.info("[Controller] Se obtendran todos los usuarios activos");
         return userService.getAllUser();
     }
 }

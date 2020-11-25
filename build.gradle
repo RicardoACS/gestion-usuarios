@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.4.0'
 	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
 	id 'java'
+	id 'groovy'
 }
 
 group = 'cl.gestionusuarios'
@@ -13,22 +14,33 @@ repositories {
 }
 
 dependencies {
+	//Spring boot
 	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation  group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
+	implementation  group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+	implementation  group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
+	implementation  group: 'org.springframework.boot', name: 'spring-boot-starter-security'
+	// Swagger
 	compile group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.5.0'
-	compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
-	compile group: 'org.springframework.boot', name: 'spring-boot-starter-web'
-	compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
-	compile group: 'org.springframework.boot', name: 'spring-boot-starter-security'
+	// H2 Database
 	compile group: 'com.h2database', name: 'h2', version: '1.4.200'
+	// Json
 	compile group: 'org.json', name: 'json', version: '20201115'
+	// JWT
 	compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+	// Lombok
 	compileOnly 'org.projectlombok:lombok:1.18.16'
 	annotationProcessor 'org.projectlombok:lombok:1.18.16'
-
 	testCompileOnly 'org.projectlombok:lombok:1.18.16'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.16'
+	// Groovy
+	compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '3.0.6', ext: 'pom'
+	compile group: 'org.codehaus.groovy', name: 'groovy', version: '3.0.6'
+	// Spock
+	testCompile 'org.springframework.boot:spring-boot-starter-test'
+	testCompile group: 'org.spockframework', name: 'spock-core', version: '2.0-M4-groovy-3.0'
+	testCompile group: 'org.spockframework', name: 'spock-spring', version: '2.0-M4-groovy-3.0'
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 test {

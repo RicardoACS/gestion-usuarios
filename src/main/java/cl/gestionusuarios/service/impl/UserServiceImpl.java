@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +37,8 @@ public class UserServiceImpl implements UserService {
     private final PhoneRepository phoneRepository;
     private final JwtUtil jwtUtil;
 
-    public UserServiceImpl(UserRepository userRepository, PhoneRepository phoneRepository, JwtUtil jwtUtil) {
+    public UserServiceImpl(UserRepository userRepository, PhoneRepository phoneRepository,
+                           JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.phoneRepository = phoneRepository;
         this.jwtUtil = jwtUtil;
@@ -46,21 +46,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<UserDto> createUser(CreateUserDto request) {
-        log.info("[Service] Se creará el usuario con email: {}", request.getEmail());
+        log.info("[Service] Se creara el usuario con email: {}", request.getEmail());
 
         if (userRepository.existsByEmail(request.getEmail())) {
             log.error("[Service] El correo ingresado {}, ya esta registrado", request.getEmail());
-            return new ResponseEntity(errorMessage("El correo ya registrado"), HttpStatus.CONFLICT);
+            return new ResponseEntity(errorMessage("El correo ya esta registrado"), HttpStatus.CONFLICT);
         }
 
         try {
-            log.info("[Service] Se mandará a crear el usuario a la DB");
+            log.info("[Service] Se mandara a crear el usuario a la DB");
             User user = userRepository.save(new CreateUserDtoToUserConverter(jwtUtil).convert(request));
 
-            log.info("[Service] Usuario agregado con éxito, ahora vamos a creaar los teléfonos del usuario");
+            log.info("[Service] Usuario agregado con exito, ahora vamos a creaar los telefonos del usuario");
             phoneRepository.saveAll(new PhoneDtoToPhoneConverter().convert(request.getPhones(), user));
 
-            log.info("[Service] Retornará el usuario");
+            log.info("[Service] Retornara el usuario");
             return new ResponseEntity(new UserToUserDtoConverter(phoneRepository).convert(user),
                     HttpStatus.OK);
         } catch (Exception e) {
@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<UserDto> updateUser(String id, CreateUserDto request) {
-        log.info("[Service] Se modificará un usuario con id: {}", id);
+        log.info("[Service] Se modificara un usuario con id: {}", id);
 
         Optional<User> user = userRepository.findUserById(id);
 
@@ -82,18 +82,18 @@ public class UserServiceImpl implements UserService {
         }
 
         try {
-            log.info("[Service] Se mandará a crear el usuario a la DB");
+            log.info("[Service] Se mandara a crear el usuario a la DB");
             User userUpdate = userRepository.save(new CreateUserDtoToUserConverter(jwtUtil)
                     .convertExist(request, user.get()));
 
-            log.info("[Service] Usuario agregado con éxito, ahora vamos a creaar los teléfonos del usuario");
+            log.info("[Service] Usuario agregado con exito, ahora vamos a creaar los telefonos del usuario");
             List<Phone> phones = phoneRepository.getAllPhoneByUserId(id);
             phoneRepository.deleteAll(phones);
 
             phoneRepository.saveAll(new PhoneDtoToPhoneConverter()
                     .convert(request.getPhones(), userUpdate));
 
-            log.info("[Service] Retornará el usuario");
+            log.info("[Service] Retornara el usuario");
 
             return new ResponseEntity(new UserToUserDtoConverter(phoneRepository).convert(userUpdate),
                     HttpStatus.OK);
@@ -144,7 +144,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<String> changeState(String id, Boolean state) {
-        log.info("[Service] Se inactivará el usuario con id: {}", id);
+        log.info("[Service] Se inactivara el usuario con id: {}", id);
         try {
             Optional<User> user = userRepository.findUserById(id);
 
@@ -156,7 +156,7 @@ public class UserServiceImpl implements UserService {
             user.get().setIsActive(state);
             user.get().setModified(new Date());
             userRepository.save(user.get());
-            return new ResponseEntity(errorMessage("Usuario actualizado con éxito"), HttpStatus.OK);
+            return new ResponseEntity(errorMessage("Usuario actualizado con exito"), HttpStatus.OK);
 
         } catch (Exception e) {
             log.error("[Service] Ha ocurrido un error al desactivar el usuario: ", e);

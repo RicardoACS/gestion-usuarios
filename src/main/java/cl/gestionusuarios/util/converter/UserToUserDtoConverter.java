@@ -1,12 +1,9 @@
 package cl.gestionusuarios.util.converter;
 
-import cl.gestionusuarios.domain.Phone;
 import cl.gestionusuarios.domain.User;
 import cl.gestionusuarios.dto.UserDto;
 import cl.gestionusuarios.repository.PhoneRepository;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
